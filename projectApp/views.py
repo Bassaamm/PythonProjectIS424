@@ -5,3 +5,6 @@ from django.shortcuts import render
 
 def index(request):
    return render(request, 'projectApp/main.html')
+
+def login(request):
+   return render(request, 'projectApp/login.html')
