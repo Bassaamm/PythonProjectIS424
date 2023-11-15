@@ -1,19 +1,19 @@
 from django.http import HttpResponse
 from django.shortcuts import render
 
-# Create your views here.
-
 def index(request):
    return render(request, 'projectApp/main.html')
 
 def login(request):
    return render(request, 'projectApp/login.html')
+def signup(request):
+   return render(request, 'projectApp/signup.html')
 
-def displayAll(request):
-   return render(request, 'projectApp/dispalyAll.html')
+def product(request):
+   return render(request, 'projectApp/product.html')
 
-def display(request):
-   return render(request, 'projectApp/display.html')
+def products(request):
+   return render(request, 'projectApp/products.html')
 def add(request):
    return render(request, 'projectApp/add.html')
 def update(request):
