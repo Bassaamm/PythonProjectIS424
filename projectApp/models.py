@@ -1,13 +1,15 @@
 from django.db import models
+from django.contrib.auth.models import User
 
-class user(models.Model):
-    username = models.CharField(max_length=30)
-    password = models.CharField(max_length=30)
-    email = models.CharField(max_length=30)
+
 # Create your models here.
-class services(models.Model):
-    name = models.CharField(max_length=30)
-    description = models.CharField(max_length=30)
-    price = models.CharField(max_length=30)
-    image = models.CharField(max_length=30)
-    category = models.CharField(max_length=30)
+class Product(models.Model):
+    name = models.CharField(max_length=200)
+    description = models.CharField(max_length=200)
+    price = models.DecimalField(max_digits=5, decimal_places=2)
+    users = models.ManyToManyField(User, through='Purchase')
+    image = models.CharField(max_length=30 , null=True , default="https://placehold.co/500x300")
+class Purchase(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    item = models.ForeignKey(Product, on_delete=models.CASCADE)
+    date_purchased = models.DateTimeField(auto_now_add=True)

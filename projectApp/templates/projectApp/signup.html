@@ -6,6 +6,10 @@
     <title>signup</title>
   </head>
   <body>
-    <a href="/login">Login</a>
+    <h2>Register</h2>
+    <form method="post">
+      {% csrf_token %} {{ form.as_p }}
+      <button type="submit">Sign up</button>
+    </form>
   </body>
 </html>

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Selling</title>
+  </head>
+  <body>
+    <nav>
+      <ul>
+        <li><a href="{% url 'products' %}">Products</a></li>
+        <li><a href="{% url 'add' %}">Add Product</a></li>
+        <li><a href="{% url 'update' %}">Update Product</a></li>
+      </ul>
+    </nav>
+    {% block content %} {% endblock %}
+    <footer>
+      <p>© 2023 Selling</p>
+    </footer>
+  </body>
+</html>

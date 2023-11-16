@@ -1,4 +1,4 @@
-{% extends "projectApp/header.html" %} {% block content %}
+{% extends 'projectApp/base.html' %} {% block content %} {% csrf_token %}
 <h1>Update Product</h1>
 <form action="/update/{{ product.id }}" method="POST">
   <label for="name">Name</label>

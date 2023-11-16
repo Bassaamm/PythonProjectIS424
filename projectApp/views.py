@@ -1,20 +1,62 @@
-from django.http import HttpResponse
-from django.shortcuts import render
-
+from django.shortcuts import redirect, render
+from .forms import RegisterForm, AddProductForm
+from .models import Product as prodcutModel
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required 
+from django.contrib.auth.forms import AuthenticationForm
 def index(request):
    return render(request, 'projectApp/main.html')
 
-def login(request):
-   return render(request, 'projectApp/login.html')
-def signup(request):
-   return render(request, 'projectApp/signup.html')
+def login_view(request):
+    if request.method == 'POST':
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password')
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                login(request, user)
+                return redirect('items')
+    else:
+        form = AuthenticationForm()
+    return render(request, 'projectApp/login.html', {'form': form})
 
-def product(request):
-   return render(request, 'projectApp/product.html')
+def signup(request):
+    if request.method == 'POST':
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password1')
+            user = authenticate(username=username, password=password)
+            login(request, user)
+            return redirect('projectApp/items')
+    else:
+        form = RegisterForm()
+    return render(request, 'projectApp/signup.html', {'form': form})
 
 def products(request):
-   return render(request, 'projectApp/products.html')
+   products = prodcutModel.objects.all()
+   return render(request, 'projectApp/products.html',{'products': products})
+
+def product(request , product_id):
+   product = prodcutModel.objects.get(id=product_id)
+   context = {'product': product}
+   return render(request, 'projectApp/product.html',context)
+
 def add(request):
-   return render(request, 'projectApp/add.html')
-def update(request):
-   return render(request, 'projectApp/update.html')
+   if request.method == 'POST':
+      addForm = AddProductForm(request.POST)
+      addForm.save()
+      redirect('item/product/add')
+   else:
+       addForm =  AddProductForm()
+   return render(request, 'projectApp/add.html' , {'form': addForm})
+
+def update(request, product_id):
+    item = prodcutModel.objects.get(id=product_id)
+    if request.method == 'POST':
+        updateForm = AddProductForm(request.POST)
+        updateForm.save()
+        return redirect('items')
+    return render(request, 'update_item.html', {'item': item})
