@@ -1,2 +1,19 @@
-{% extends "projectApp/header.html" %} {% block content %} {% for product in
-products %} {% endblock %}
+{% extends 'projectApp/base.html' %} {% block content %}
+<h2>Items</h2>
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Description</th>
+    <th>Price</th>
+    <th>Details</th>
+  </tr>
+  {% for product in products %}
+  <tr>
+    <td>{{ product.name }}</td>
+    <td>{{ product.description }}</td>
+    <td>{{ product.price }}</td>
+    <td><a href="{% url 'product' product.id %}">Show</a></td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}
