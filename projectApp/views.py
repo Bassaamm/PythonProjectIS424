@@ -1,5 +1,5 @@
 from django.shortcuts import redirect, render
-from .forms import RegisterForm, AddProductForm
+from .forms import RegisterForm, AddProductForm, UpdateProductForm
 from .models import Product as prodcutModel
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required 
@@ -54,9 +54,11 @@ def add(request):
    return render(request, 'projectApp/add.html' , {'form': addForm})
 
 def update(request, product_id):
-    item = prodcutModel.objects.get(id=product_id)
+    product = prodcutModel.objects.get(id=product_id)
     if request.method == 'POST':
-        updateForm = AddProductForm(request.POST)
+        updateForm = UpdateProductForm(request.POST)
         updateForm.save()
         return redirect('items')
-    return render(request, 'update_item.html', {'item': item})
+    else:
+        updateForm = UpdateProductForm(instance=product)
+    return render(request, 'update_item.html', {'item': product})
