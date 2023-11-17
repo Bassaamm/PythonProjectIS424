@@ -9,6 +9,9 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=5, decimal_places=2)
     users = models.ManyToManyField(User, through='Purchase')
     image = models.CharField(max_length=30 , null=True , default="https://placehold.co/500x300")
+
+    def __str__(self):
+        return self.name
 class Purchase(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     item = models.ForeignKey(Product, on_delete=models.CASCADE)

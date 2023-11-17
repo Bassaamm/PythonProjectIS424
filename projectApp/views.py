@@ -53,12 +53,13 @@ def add(request):
        addForm =  AddProductForm()
    return render(request, 'projectApp/add.html' , {'form': addForm})
 
-def update(request, product_id):
-    product = prodcutModel.objects.get(id=product_id)
+def update(request):
+    product = prodcutModel.objects.all()
     if request.method == 'POST':
-        updateForm = UpdateProductForm(request.POST)
-        updateForm.save()
-        return redirect('items')
-    else:
-        updateForm = UpdateProductForm(instance=product)
-    return render(request, 'update_item.html', {'item': product})
+        product = prodcutModel.objects.get(id=request.POST['select'])
+        product.name = request.POST['name']
+        product.description = request.POST['description']
+        product.price = request.POST['price']
+        product.save()
+        return redirect('update')
+    return render(request, 'projectApp/update.html', {'products': product})

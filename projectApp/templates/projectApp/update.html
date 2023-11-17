@@ -1,6 +1,12 @@
-{% extends 'projectApp/base.html' %} {% block content %} {% csrf_token %}
+{% extends 'projectApp/base.html' %} {% block content %}
 <h1>Update Product</h1>
-<form action="/update/{{ product.id }}" method="POST">
+<form method="POST">
+  {% csrf_token %}
+  <select name="select">
+    {% for product in products %}
+    <option value="{{product.id}}">{{ product.name }}</option>
+    {% endfor %}
+  </select>
   <label for="name">Name</label>
   <input type="text" name="name" value="{{ product.name }}" />
   <label for="price">Price</label>
