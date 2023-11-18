@@ -1,23 +1,57 @@
 {% extends 'projectApp/base.html' %} {% block content %}
-<h1>Update Product</h1>
+<h1 class="mb-4">Update Product</h1>
 <form method="POST">
   {% csrf_token %}
-  <select name="select">
-    {% for product in products %}
-    <option value="{{product.id}}">{{ product.name }}</option>
-    {% endfor %}
-  </select>
-  <label for="name">Name</label>
-  <input type="text" name="name" value="{{ product.name }}" />
-  <label for="price">Price</label>
-  <input type="text" name="price" value="{{ product.price }}" />
-  <label>Description</label>
-  <input
-    type="text"
-    name="description"
-    id="description"
-    value="{{ product.description }}"
-  />
-  <button>Update</button>
+  <div class="input-group mb-3">
+    <label class="input-group-text" for="inputGroupSelect01">Products</label>
+    <select class="form-select" name="select" id="inputGroupSelect01">
+      {% if productID.id != none %}
+      <option selected disabled defaultValue="{{ productID.id }}">
+        {{ productID.name }}
+      </option>
+      {% else %}
+      <option selected disabled>Choose...</option>
+      {% endif %} {% for product in products %}
+      <option value="{{ product.id }}">{{ product.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="input-group flex-nowrap">
+    <span class="input-group-text" id="addon-wrapping ">Product Name</span>
+    <input
+      type="text"
+      class="form-control m"
+      defaultValue="{{ productID.name }}"
+      placeholder="TV"
+      name="name"
+      aria-label="TV"
+      aria-describedby="addon-wrapping"
+      required
+    />
+    <span class="input-group-text ms-4" id="addon-wrapping">Price</span>
+    <input
+      type="text"
+      class="form-control"
+      name="price"
+      placeholder="12$"
+      defaultValue="{{productID.price}}"
+      required
+    />
+    <span class="input-group-text ms-4" id="addon-wrapping">Description</span>
+    <input
+      type="text"
+      class="form-control"
+      placeholder="Large TV"
+      name="description"
+      defaultValue="{{productID.description}}"
+      aria-label="TV"
+      aria-describedby="addon-wrapping"
+      required
+    />
+  </div>
+  <div class="text-center">
+    <button class="mt-3 btn btn-primary text-center w-50">Update</button>
+  </div>
 </form>
+
 {% endblock %}
