@@ -1,39 +1,60 @@
 from django.shortcuts import redirect, render
-from .forms import RegisterForm, AddProductForm, UpdateProductForm
-from .models import Product as prodcutModel
+
+from .models import Product as prodcutModel, Purchase
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required 
-from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.models import User
+from django.contrib import messages
+
 def index(request):
    return render(request, 'projectApp/main.html')
 
 def login_view(request):
     if request.method == 'POST':
-        form = AuthenticationForm(request, data=request.POST)
-        if form.is_valid():
-            username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password')
-            user = authenticate(username=username, password=password)
-            if user is not None:
-                login(request, user)
-                return redirect('items')
-    else:
-        form = AuthenticationForm()
-    return render(request, 'projectApp/login.html', {'form': form})
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+        if username == '':
+            messages.error(request, 'Username must be filled')
+            return redirect('/login')
+        if password == '':
+            messages.error(request, 'Password must be filled')
+            return redirect('/login')
+        if user is not None:
+            login(request, user)
+            messages.success(request, f'Welcome back, {username}!')
+            return redirect('/items/products')
+        else:
+            messages.error(request, 'Invalid username or password.')
+    return render(request, 'projectApp/login.html')
+
 
 def signup(request):
     if request.method == 'POST':
-        form = RegisterForm(request.POST)
-        if form.is_valid():
-            form.save()
-            username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password1')
-            user = authenticate(username=username, password=password)
-            login(request, user)
-            return redirect('projectApp/items')
-    else:
-        form = RegisterForm()
-    return render(request, 'projectApp/signup.html', {'form': form})
+        print(request.POST)
+        username = request.POST['username']
+        password = request.POST['password']
+        passwordCon = request.POST['passwordCon']
+
+        if User.objects.filter(username=username).exists():
+            messages.error(request, 'Username already exists')
+            return redirect('/signup')
+        if username == '' :
+            messages.error(request, 'Username must be filled')
+            return redirect('/signup')
+        if password == '' or passwordCon == '' :
+            messages.error(request, 'Password must be filled')
+            return redirect('/signup')
+        if password != passwordCon:
+            messages.error(request, 'Passwords do not match')
+            return redirect('/signup')
+
+        user = User.objects.create_user(username=username, password=password)
+        user.save()
+        messages.success(request, f'Account created for {username}!')
+        return redirect('/login')
+
+    return render(request, 'projectApp/signup.html')
 
 def products(request):
    products = prodcutModel.objects.all()
@@ -41,24 +62,76 @@ def products(request):
 
 def product(request , product_id):
    product = prodcutModel.objects.get(id=product_id)
-   context = {'product': product}
-   return render(request, 'projectApp/product.html',context)
+   return render(request, 'projectApp/product.html',{'product': product})
 
 def add(request):
    if request.method == 'POST':
-      addForm = AddProductForm(request.POST)
-      addForm.save()
-      redirect('item/product/add')
-   else:
-       addForm =  AddProductForm()
-   return render(request, 'projectApp/add.html' , {'form': addForm})
+        print(request.POST)
+        print(request.POST)
+        name = request.POST['name']
+        description = request.POST['description']
+        price = request.POST['price']
+        prodcutModel.objects.create(name=name, description=description, price=price)
+        messages.success(request, f'{name} have been added successfully!')
+        redirect('item/product/add')
+   return render(request, 'projectApp/add.html')
 
-def update(request, product_id):
-    product = prodcutModel.objects.get(id=product_id)
+def update(request , product_id=""):
+    product = prodcutModel.objects.all()
+    if  product_id != "" and type(int(product_id)) == int:
+        product_id = prodcutModel.objects.get(id=int(product_id))
     if request.method == 'POST':
-        updateForm = UpdateProductForm(request.POST)
-        updateForm.save()
-        return redirect('items')
-    else:
-        updateForm = UpdateProductForm(instance=product)
-    return render(request, 'update_item.html', {'item': product})
+        print(request.POST)
+        product = prodcutModel.objects.get(id=request.POST['select'])
+        product.name = request.POST['name']
+        product.description = request.POST['description']
+        product.price = request.POST['price']
+        product.save()
+        messages.success(request, f'Product have been updated successfully!')
+
+        return redirect('update')
+    print(product_id)
+    return render(request, 'projectApp/update.html', {'products': product , 'productID': product_id})
+
+def userLogout(request):
+    logout(request)
+    return redirect('login')
+
+def delete(request, product_id):
+    product = prodcutModel.objects.get(id=product_id)
+    product.delete()
+    messages.success(request, f'Product have been deleted successfully!')
+    return redirect('/items/products')
+
+def deleteFromHistory(request, purchase_id):
+    purchase = Purchase.objects.get(id=purchase_id)
+    purchase.delete()
+    messages.success(request, f'Product have been deleted successfully!')
+    return redirect('/history')
+
+def purchase(request, product_id , status):
+    user = User.objects.get(id=request.user.id)
+    product = prodcutModel.objects.get(id=product_id)
+    Purchase.objects.create(user=user, product=product , status=status)
+    if status == 'purchase':
+        messages.success(request, f'Product have been purchased successfully!')
+        return render(request, 'projectApp/purchase.html')
+    elif status == 'added':
+        messages.success(request, f'Product have been added successfully!')
+        return redirect('/history')
+    elif status == 'rented':
+        messages.success(request, f'Product have been rented successfully!')
+        return redirect('/history')
+
+def history(request):
+    user = User.objects.get(id=request.user.id)
+    purchases = Purchase.objects.filter(user=user)
+    return render(request, 'projectApp/history.html', {'purchases': purchases})
+
+def updatedPurchase(request,purchase_id):
+    user = User.objects.get(id=request.user.id)
+    purchase = Purchase.objects.get(user_id=user.id , id=purchase_id)
+    purchase.status= 'purchase' 
+    purchase.save()
+    messages.success(request, f'Product status have been updated successfully!')
+    return redirect('/history')
