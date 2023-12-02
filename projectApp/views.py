@@ -113,7 +113,7 @@ def purchase(request, product_id , status):
     user = User.objects.get(id=request.user.id)
     product = prodcutModel.objects.get(id=product_id)
     Purchase.objects.create(user=user, product=product , status=status)
-    if status == 'purchase':
+    if status == 'purchased':
         messages.success(request, f'Product have been purchased successfully!')
         return render(request, 'projectApp/purchase.html')
     elif status == 'added':
