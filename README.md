@@ -1,6 +1,6 @@
 ﻿# Project IS 424
 
-## Student :
+## Students :
 
 #### `1- Bassam AlQarni 442102986`
 
