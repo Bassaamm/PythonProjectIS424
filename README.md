@@ -4,9 +4,9 @@
 
 #### `1- Bassam AlQarni 442102986`
 
-#### `2- Bassam AlQarni 442102986`
+#### `2- Rashed Alashwan 442101701`
 
-#### `3- Bassam AlQarni 442102986`
+#### `3- Abdulaziz Almhanna 443102174`
 
 ### To Run the project you need to install the packages first
 
