@@ -7,11 +7,15 @@ from django.contrib.auth.models import User
 from django.contrib import messages
 
 def index(request):
-   return render(request, 'projectApp/main.html')
+   if request.user.is_authenticated:
+    return redirect('items/products')
+   else:
+    return redirect('login/')
+   return render(request, 'projectApp/login.html')
 
 def login_view(request):
     if request.method == 'POST':
-        username = request.POST['username']
+        username =  request.POST['username'].lower()
         password = request.POST['password']
         user = authenticate(request, username=username, password=password)
         if username == '':
@@ -32,7 +36,7 @@ def login_view(request):
 def signup(request):
     if request.method == 'POST':
         print(request.POST)
-        username = request.POST['username']
+        username = request.POST['username'].lower()
         password = request.POST['password']
         passwordCon = request.POST['passwordCon']
 
@@ -55,15 +59,17 @@ def signup(request):
         return redirect('/login')
 
     return render(request, 'projectApp/signup.html')
-
+@login_required
 def products(request):
    products = prodcutModel.objects.all()
    return render(request, 'projectApp/products.html',{'products': products})
 
+@login_required
 def product(request , product_id):
    product = prodcutModel.objects.get(id=product_id)
    return render(request, 'projectApp/product.html',{'product': product})
 
+@login_required
 def add(request):
    if request.method == 'POST':
         print(request.POST)
@@ -76,6 +82,7 @@ def add(request):
         redirect('item/product/add')
    return render(request, 'projectApp/add.html')
 
+@login_required
 def update(request , product_id=""):
     product = prodcutModel.objects.all()
     if  product_id != "" and type(int(product_id)) == int:
@@ -93,22 +100,26 @@ def update(request , product_id=""):
     print(product_id)
     return render(request, 'projectApp/update.html', {'products': product , 'productID': product_id})
 
+@login_required
 def userLogout(request):
     logout(request)
     return redirect('login')
 
+@login_required
 def delete(request, product_id):
     product = prodcutModel.objects.get(id=product_id)
     product.delete()
     messages.success(request, f'Product have been deleted successfully!')
     return redirect('/items/products')
 
+@login_required
 def deleteFromHistory(request, purchase_id):
     purchase = Purchase.objects.get(id=purchase_id)
     purchase.delete()
     messages.success(request, f'Product have been deleted successfully!')
     return redirect('/history')
 
+@login_required
 def purchase(request, product_id , status):
     user = User.objects.get(id=request.user.id)
     product = prodcutModel.objects.get(id=product_id)
@@ -123,11 +134,13 @@ def purchase(request, product_id , status):
         messages.success(request, f'Product have been rented successfully!')
         return redirect('/history')
 
+@login_required
 def history(request):
     user = User.objects.get(id=request.user.id)
     purchases = Purchase.objects.filter(user=user)
     return render(request, 'projectApp/history.html', {'purchases': purchases})
 
+@login_required
 def updatedPurchase(request,purchase_id):
     user = User.objects.get(id=request.user.id)
     purchase = Purchase.objects.get(user_id=user.id , id=purchase_id)
