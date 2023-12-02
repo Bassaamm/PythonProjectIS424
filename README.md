@@ -12,7 +12,7 @@
 
 ### run this commad
 
-#### `pip install -r packges.txt`
+#### `pip install -r packages.txt`
 
 ### run the server
 
