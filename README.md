@@ -12,8 +12,8 @@
 
 ### run this commad
 
-#### `pip install -r packages.txt`
+    $ pip install -r packages.txt
 
 ### run the server
 
-#### `pip manage.py runserver`
+    $ pip manage.py runserver
