@@ -77,6 +77,9 @@ def add(request):
         name = request.POST['name']
         description = request.POST['description']
         price = request.POST['price']
+        if not price.isdigit():
+            messages.error(request, 'Price should be a number.')
+            return render(request, 'projectApp/add.html')
         prodcutModel.objects.create(name=name, description=description, price=price)
         messages.success(request, f'{name} have been added successfully!')
         redirect('item/product/add')
@@ -93,6 +96,9 @@ def update(request , product_id=""):
         product.name = request.POST['name']
         product.description = request.POST['description']
         product.price = request.POST['price']
+        if not product.price.isdigit():
+            messages.error(request, 'Price should be a number.')
+            return render(request, 'projectApp/update.html')
         product.save()
         messages.success(request, f'Product have been updated successfully!')
 
@@ -144,7 +150,7 @@ def history(request):
 def updatedPurchase(request,purchase_id):
     user = User.objects.get(id=request.user.id)
     purchase = Purchase.objects.get(user_id=user.id , id=purchase_id)
-    purchase.status= 'purchase' 
+    purchase.status= 'purchased' 
     purchase.save()
     messages.success(request, f'Product status have been updated successfully!')
     return redirect('/history')
