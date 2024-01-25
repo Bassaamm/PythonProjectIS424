@@ -3,7 +3,7 @@
  ###  It has a fully funcational dashboard to manage the products and do the crud operations on it
  ###  Authentication and Authorization are available 
  
-### To Run the project you need to install the packages first
+### To Run the project you need to install the dependencies first
 
 ### run this commad
 
