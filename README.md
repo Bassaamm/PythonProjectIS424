@@ -1,13 +1,8 @@
 ﻿# Project IS 424
-
-## Students :
-
-#### `1- Bassam AlQarni 442102986`
-
-#### `2- Rashed Alashwan 442101701`
-
-#### `3- Abdulaziz Almhanna 443102174`
-
+ A Full Stack CRUD application using django. bootstrap was used for ui
+ ###  It has a fully funcational dashboard to manage the products and do the crud operations on it
+ ###  Authentication and Authorization are available 
+ 
 ### To Run the project you need to install the packages first
 
 ### run this commad
